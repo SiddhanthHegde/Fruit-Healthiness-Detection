@@ -1,0 +1,6 @@
+JSON2MASK:
+  convert: True
+  root_dir: ''
+  save_dir: ''
+  num_processes: 16
+  num_labels: 3
