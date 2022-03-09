@@ -4,3 +4,13 @@ JSON2MASK:
   save_dir: ''
   num_processes: 16
   num_labels: 3
+
+CHIPPING:
+  perform_chipping: True
+  dim: 2048                                 # dimension (in pixels) of the image chips to  be generated
+  stride: 2048                              # stride (in pixels) to be kept
+  padding: 0                                # Padding (in pixels) 
+  num_processes: 1                          # No. of processes for multiprocessing
+  rgb_dir: 'Dataset/rgb'                    # Path to the directory containing rgb images
+  gt_dir: 'Dataset/gt'                      # Path to the directory containing gt images
+  out_dir: 'Dataset/chips'                  # Path to the directory where you want to generate the chips

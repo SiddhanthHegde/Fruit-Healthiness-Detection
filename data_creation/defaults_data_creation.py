@@ -16,3 +16,17 @@ _C.JSON2MASK.root_dir = ''              # Root directory containing the jsons
 _C.JSON2MASK.save_dir = ''              # Directory to save the masks in .png format
 _C.JSON2MASK.num_processes = 16         # Number of processes for multiprocessing
 _C.JSON2MASK.num_labels = 3             # Labels should be only 0, 1 and 2
+
+# -----------------------------------------------------------------------------
+# chipping data
+# -----------------------------------------------------------------------------
+
+_C.CHIPPING = CN()
+_C.CHIPPING.perform_chipping = True     # Whether to preform batching (create image chips) or not.
+_C.CHIPPING.dim = 512                   # dimension (in pixels) of the image chips to  be generated
+_C.CHIPPING.stride = 256                # stride (in pixels) to be kept
+_C.CHIPPING.padding = 0                 # Padding (in pixels) present in the PIXELSd images
+_C.CHIPPING.num_processes = 1           # No. of processes for multiprocessing
+_C.CHIPPING.rgb_dir = ''                # Path to the directory containing rgb images
+_C.CHIPPING.gt_dir = ''                 # Path to the directory containing masks of images
+_C.CHIPPING.out_dir = ''                # Path to the directory where you want to generate the chips
