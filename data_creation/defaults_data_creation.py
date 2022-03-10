@@ -30,3 +30,13 @@ _C.CHIPPING.num_processes = 1           # No. of processes for multiprocessing
 _C.CHIPPING.rgb_dir = ''                # Path to the directory containing rgb images
 _C.CHIPPING.gt_dir = ''                 # Path to the directory containing masks of images
 _C.CHIPPING.out_dir = ''                # Path to the directory where you want to generate the chips
+
+# -----------------------------------------------------------------------------
+# Remove images having black portion above a certain threshold 
+# -----------------------------------------------------------------------------
+
+_C.REMOVE_IMAGES = CN()
+_C.REMOVE_IMAGES.remove_images = True   # Whether to prune training data for rgb images having black portion above a certain threshold
+_C.REMOVE_IMAGES.images_folder = ''     # Path to the directory containing the trainA and trainB folder
+_C.REMOVE_IMAGES.percent_threshold = 1  # Percent thresold for removing images
+_C.REMOVE_IMAGES.num_processes = 1      # No. of processes for multiprocessing

@@ -2,6 +2,7 @@ import os
 import numpy as np
 from osgeo import gdal
 from skimage import io
+from PIL import Image
 
 def verify_gt_and_rgb(rgb_dir: str, gt_dir: str):
     rgb_names = [rgb for rgb in os.listdir(rgb_dir) if rgb.endswith('.JPG')]    
@@ -40,3 +41,20 @@ def translate_rgb_gt(rgb_input: str, gt_input: str, out_rgb_path: str, out_gt_pa
         os.remove(out_rgb_chip + '.aux.xml')
     if os.path.exists(out_gt_chip + '.aux.xml'):
         os.remove(out_gt_chip + '.aux.xml')
+
+def remove_images(image_name: str, rgb_dir: str, gt_dir: str, removed_rgb_dir: str, removed_gt_dir: str, percent_threshold: int):
+    src_rgb = os.path.join(rgb_dir, image_name)
+    src_gt = os.path.join(gt_dir, image_name)
+    dest_rgb = os.path.join(removed_rgb_dir, image_name)
+    dest_gt = os.path.join(removed_gt_dir, image_name)
+
+    rgb_np = np.array(Image.open(src_rgb))
+    gt_np = np.array(Image.open(src_gt))
+
+    if 0 in rgb_np:
+        num_pixels_0 = (rgb_np[:,:,0][rgb_np[:,:,0] == 0]).size +  (rgb_np[:,:,1][rgb_np[:,:,1] == 0]).size + (rgb_np[:,:,2][rgb_np[:,:,2] == 0]).size 
+        percent_pixels_0 = (float(num_pixels_0)/rgb_np.size) * 100
+        all_pixels_0_in_gt = np.sum(np.where(gt_np == 0)) == len(gt_np.reshape(-1))
+        if percent_pixels_0 >= percent_threshold or all_pixels_0_in_gt:
+            os.rename(src_rgb, dest_rgb)
+            os.rename(src_gt, dest_gt)

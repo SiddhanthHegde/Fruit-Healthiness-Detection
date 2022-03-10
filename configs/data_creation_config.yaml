@@ -14,3 +14,9 @@ CHIPPING:
   rgb_dir: 'Dataset/rgb'                    # Path to the directory containing rgb images
   gt_dir: 'Dataset/gt'                      # Path to the directory containing gt images
   out_dir: 'Dataset/chips'                  # Path to the directory where you want to generate the chips
+
+REMOVE_IMAGES:
+  remove_images: True                       # Whether to prune training data for rgb images having black portion above a certain threshold
+  images_folder: ''                         # Path to the directory containing the rgb and gt chips (use only if not chipping)
+  percent_threshold: 10                     # Percent thresold for removing images
+  num_processes: 4                          # No. of processes for multiprocessing

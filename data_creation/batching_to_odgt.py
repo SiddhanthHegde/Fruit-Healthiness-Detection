@@ -9,6 +9,7 @@ from data_utils import verify_gt_and_rgb
 from data_utils import get_image_dimensions
 from data_utils import create_slice_task_list
 from data_utils import translate_rgb_gt
+from data_utils import remove_images
 
 #-----------------------------------------------------------------------
 
@@ -63,12 +64,31 @@ if __name__ == '__main__':
             p.close()
             p.join()
 
+#-----------------------------------------------------------------------
+    if cfg.REMOVE_IMAGES:
+        print('Removing images!!')
+        if cfg.CHIPPING.perform_chipping:
+            images_folder = cfg.CHIPPING.out_dir
+        else:      
+            images_folder = cfg.REMOVE_IMAGES.images_folder
+        percent_threshold = cfg.REMOVE_IMAGES.percent_threshold
+        num_processes = cfg.REMOVE_IMAGES.num_processes
 
+        rgb_dir = os.path.join(images_folder,'rgb')
+        gt_dir = os.path.join(images_folder,'gt')
+        removed_dir_rgb = os.path.join(images_folder, 'removed_images/rgb')
+        removed_dir_gt = os.path.join(images_folder, 'removed_images/gt')
 
+        os.makedirs(removed_dir_rgb, exist_ok=True)
+        os.makedirs(removed_dir_gt, exist_ok=True)
 
+        task_list = []
+        p = Pool(num_processes)
+        for image_name in os.listdir(rgb_dir):
+            task_list.append((image_name, rgb_dir, gt_dir, removed_dir_rgb, removed_dir_gt, percent_threshold))
         
-        
+        p.starmap(remove_images, task_list)
+        p.close()
+        p.join()
 
-                
-
-
+        print(f'Removed a total of {str(len(os.listdir(removed_dir_rgb)))} chips')
