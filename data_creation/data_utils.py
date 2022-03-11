@@ -49,14 +49,12 @@ def remove_images(image_name: str, rgb_dir: str, gt_dir: str, removed_rgb_dir: s
     dest_rgb = os.path.join(removed_rgb_dir, image_name)
     dest_gt = os.path.join(removed_gt_dir, image_name)
 
-    rgb_np = np.array(Image.open(src_rgb))
     gt_np = np.array(Image.open(src_gt))
 
-    if 0 in rgb_np:
-        num_pixels_0 = (rgb_np[:,:,0][rgb_np[:,:,0] == 0]).size +  (rgb_np[:,:,1][rgb_np[:,:,1] == 0]).size + (rgb_np[:,:,2][rgb_np[:,:,2] == 0]).size 
-        percent_pixels_0 = (float(num_pixels_0)/rgb_np.size) * 100
-        all_pixels_0_in_gt = np.sum(np.where(gt_np == 0)) == len(gt_np.reshape(-1))
-        if percent_pixels_0 >= percent_threshold or all_pixels_0_in_gt:
+    if 0 in gt_np:
+        num_pixels_0 = np.sum(gt_np == 0)
+        percent_pixels_0 = (float(num_pixels_0)/gt_np.size) * 100
+        if percent_pixels_0 > percent_threshold:
             os.rename(src_rgb, dest_rgb)
             os.rename(src_gt, dest_gt)
 
