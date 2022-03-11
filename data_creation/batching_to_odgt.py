@@ -10,6 +10,7 @@ from data_utils import get_image_dimensions
 from data_utils import create_slice_task_list
 from data_utils import translate_rgb_gt
 from data_utils import remove_images
+from data_utils import get_pixel_percentage
 
 #-----------------------------------------------------------------------
 
@@ -92,3 +93,23 @@ if __name__ == '__main__':
         p.join()
 
         print(f'Removed a total of {str(len(os.listdir(removed_dir_rgb)))} chips')
+
+#-----------------------------------------------------------------------
+    if cfg.PIXELS.compute_pixel_ratio: 
+        if cfg.CHIPPING.perform_chipping:
+            image_dir = os.path.join(cfg.CHIPPING.out_dir, 'gt')
+        else:      
+            image_dir = cfg.PIXELS.image_dir
+        class_values =  cfg.PIXELS.class_values
+
+        print('Getting class wise pixel percentage for all images.')
+        class_pixel_count_dict = get_pixel_percentage(image_dir, class_values)   
+        total_no_pixels = 0
+        for key in class_pixel_count_dict:
+            total_no_pixels += class_pixel_count_dict[key]
+        
+        for key in class_pixel_count_dict:
+            percent_of_value = (class_pixel_count_dict[key]/total_no_pixels)*100
+            print("Class - {}, Percentage - {} ".format(key, percent_of_value))      
+            with open(os.path.join(os.path.dirname(image_dir), 'pixels_distribution.txt'), 'a') as pixels_distribution:
+                pixels_distribution.write('Class: {}, Percentage: {}\n'.format(key, percent_of_value))     

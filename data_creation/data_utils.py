@@ -2,6 +2,7 @@ import os
 import numpy as np
 from osgeo import gdal
 from skimage import io
+from tqdm import tqdm
 from PIL import Image
 
 def verify_gt_and_rgb(rgb_dir: str, gt_dir: str):
@@ -58,3 +59,20 @@ def remove_images(image_name: str, rgb_dir: str, gt_dir: str, removed_rgb_dir: s
         if percent_pixels_0 >= percent_threshold or all_pixels_0_in_gt:
             os.rename(src_rgb, dest_rgb)
             os.rename(src_gt, dest_gt)
+
+def get_pixel_percentage(image_dir: str, class_values: list):
+    image_paths = [os.path.join(image_dir, path) for path in os.listdir(image_dir)]
+    class_pixel_count_dict = {}
+    for class_value in class_values:
+        class_pixel_count_dict[class_value] = 0
+    
+    for image_path in tqdm(image_paths):        
+        img_np = np.array(Image.open(image_path))
+        unique, counts = np.unique(img_np, return_counts=True)
+        dict_temp = dict(zip(unique, counts))
+        for key in dict_temp.keys():
+            if key not in class_pixel_count_dict:
+                class_pixel_count_dict[key] = 0
+            class_pixel_count_dict[key] += dict_temp[key]
+    
+    return class_pixel_count_dict

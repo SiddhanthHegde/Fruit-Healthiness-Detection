@@ -1,16 +1,16 @@
 JSON2MASK:
-  convert: True
-  root_dir: ''
-  save_dir: ''
-  num_processes: 16
-  num_labels: 3
+  convert: True                            # Whether to convert json to mask or not
+  root_dir: 'Dataset/rgb'                  # Root directory containing the jsons
+  save_dir: 'Dataset/gt'                   # Directory to save the masks in .png format
+  num_processes: 16                        # Number of processes for multiprocessing
+  num_labels: 3                            # Labels should be only 0, 1 and 2
 
 CHIPPING:
   perform_chipping: True
   dim: 2048                                 # dimension (in pixels) of the image chips to  be generated
   stride: 2048                              # stride (in pixels) to be kept
   padding: 0                                # Padding (in pixels) 
-  num_processes: 1                          # No. of processes for multiprocessing
+  num_processes: 16                         # No. of processes for multiprocessing
   rgb_dir: 'Dataset/rgb'                    # Path to the directory containing rgb images
   gt_dir: 'Dataset/gt'                      # Path to the directory containing gt images
   out_dir: 'Dataset/chips'                  # Path to the directory where you want to generate the chips
@@ -20,3 +20,8 @@ REMOVE_IMAGES:
   images_folder: ''                         # Path to the directory containing the rgb and gt chips (use only if not chipping)
   percent_threshold: 10                     # Percent thresold for removing images
   num_processes: 4                          # No. of processes for multiprocessing
+
+PIXELS:
+  compute_pixel_ratio: True                 # Whether to calculate pixels ratio (distribution) or not
+  image_dir: ''                             # Path to the directory containing the images
+  class_values: [0,1,2]                     # Class values

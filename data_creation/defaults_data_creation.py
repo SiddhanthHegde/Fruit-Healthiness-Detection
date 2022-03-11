@@ -40,3 +40,12 @@ _C.REMOVE_IMAGES.remove_images = True   # Whether to prune training data for rgb
 _C.REMOVE_IMAGES.images_folder = ''     # Path to the directory containing the trainA and trainB folder
 _C.REMOVE_IMAGES.percent_threshold = 1  # Percent thresold for removing images
 _C.REMOVE_IMAGES.num_processes = 1      # No. of processes for multiprocessing
+
+# -----------------------------------------------------------------------------
+# compute pixel ratio and replace pixels
+# -----------------------------------------------------------------------------
+
+_C.PIXELS = CN()
+_C.PIXELS.compute_pixel_ratio = True   # Whether to calculate pixels ratio (distribution) or not
+_C.PIXELS.image_dir = ''               # Path to the directory containing the images
+_C.PIXELS.class_values = []            # Class values present in gt 
