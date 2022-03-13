@@ -75,7 +75,7 @@ def get_pixel_percentage(image_dir: str, class_values: list):
     
     return class_pixel_count_dict
 
-def make_json(rgb_chips_dir: int, gt_chips_dir: int, in_dir: str, out_dir: str, val_split_percent: int, height: int, width: int):
+def make_json(rgb_chips_dir: str, gt_chips_dir: str, in_dir: str, out_dir: str, val_split_percent: int, height: int, width: int):
     rgb_image_list = os.listdir(rgb_chips_dir)
 
     validation_images_list = rgb_image_list[: int((len(rgb_image_list) * val_split_percent/100))]
