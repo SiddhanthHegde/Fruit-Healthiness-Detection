@@ -11,12 +11,13 @@ from data_utils import create_slice_task_list
 from data_utils import translate_rgb_gt
 from data_utils import remove_images
 from data_utils import get_pixel_percentage
+from data_utils import make_json
 
 #-----------------------------------------------------------------------
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description = 'Create image chips, compute pixel ratio, split data and make odgt files')
+    parser = argparse.ArgumentParser(description = 'Create image chips, compute pixel ratio, split data and make json files')
     parser.add_argument('--cfg', metavar = 'FILE', help = 'path to config file', type = str, default='configs/data_creation_config.yaml')
     args = parser.parse_args()
 
@@ -67,7 +68,7 @@ if __name__ == '__main__':
 
 #-----------------------------------------------------------------------
     if cfg.REMOVE_IMAGES:
-        print('Removing images!!')
+        print('\nRemoving images!!')
         if cfg.CHIPPING.perform_chipping:
             images_folder = cfg.CHIPPING.out_dir
         else:      
@@ -102,7 +103,7 @@ if __name__ == '__main__':
             image_dir = cfg.PIXELS.image_dir
         class_values =  cfg.PIXELS.class_values
 
-        print('Getting class wise pixel percentage for all images.')
+        print('\nGetting class wise pixel percentage for all images!!')
         class_pixel_count_dict = get_pixel_percentage(image_dir, class_values)   
         total_no_pixels = 0
         for key in class_pixel_count_dict:
@@ -113,3 +114,25 @@ if __name__ == '__main__':
             print("Class - {}, Percentage - {} ".format(key, percent_of_value))      
             with open(os.path.join(os.path.dirname(image_dir), 'pixels_distribution.txt'), 'a') as pixels_distribution:
                 pixels_distribution.write('Class: {}, Percentage: {}\n'.format(key, percent_of_value))     
+
+#-----------------------------------------------------------------------
+    if cfg.MAKE_JSON.make_json:
+        print('\nSplitting data and creating jsons!!')
+        if cfg.CHIPPING.perform_chipping:
+            in_dir = cfg.CHIPPING.out_dir
+            out_dir = cfg.CHIPPING.out_dir
+        else:
+            in_dir = cfg.MAKE_JSON.in_dir
+            out_dir = cfg.MAKE_JSON.out_dir
+
+        val_split_percent = cfg.MAKE_JSON.val_split_percent
+        height = cfg.MAKE_JSON.height
+        width = cfg.MAKE_JSON.width
+
+        rgb_chips_dir = os.path.join(in_dir, 'rgb')
+        gt_chips_dir = os.path.join(in_dir, 'gt')
+
+        make_json(rgb_chips_dir, gt_chips_dir, in_dir, out_dir, val_split_percent, height, width)
+
+        print('\nData ready for training!!')
+        print()

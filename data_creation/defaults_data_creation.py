@@ -49,3 +49,15 @@ _C.PIXELS = CN()
 _C.PIXELS.compute_pixel_ratio = True   # Whether to calculate pixels ratio (distribution) or not
 _C.PIXELS.image_dir = ''               # Path to the directory containing the images
 _C.PIXELS.class_values = []            # Class values present in gt 
+
+# -----------------------------------------------------------------------------
+# Make .json file 
+# -----------------------------------------------------------------------------
+
+_C.MAKE_JSON = CN()
+_C.MAKE_JSON.make_json = True           # Whether to make .json file or not
+_C.MAKE_JSON.in_dir = ''                # Path to the directory containing the rgb and gt images
+_C.MAKE_JSON.out_dir = ''               # Path to the directory to generate the .json files
+_C.MAKE_JSON.val_split_percent = 5      # Validation split
+_C.MAKE_JSON.height = 2048              # Height of the images
+_C.MAKE_JSON.width = 2048               # Width of the images

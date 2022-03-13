@@ -74,3 +74,54 @@ def get_pixel_percentage(image_dir: str, class_values: list):
             class_pixel_count_dict[key] += dict_temp[key]
     
     return class_pixel_count_dict
+
+def make_json(rgb_chips_dir: int, gt_chips_dir: int, in_dir: str, out_dir: str, val_split_percent: int, height: int, width: int):
+    rgb_image_list = os.listdir(rgb_chips_dir)
+
+    validation_images_list = rgb_image_list[: int((len(rgb_image_list) * val_split_percent/100))]
+
+    validation_images_dir = os.path.join(in_dir, 'validation', 'images')
+    validation_annots_dir = os.path.join(in_dir, 'validation', 'annotations')
+
+    os.makedirs(validation_images_dir, exist_ok=True)
+    os.makedirs(validation_annots_dir, exist_ok=True)
+
+    for img in validation_images_list:
+        os.rename(os.path.join(rgb_chips_dir, img), os.path.join(validation_images_dir, img))
+        os.rename(os.path.join(gt_chips_dir, img), os.path.join(validation_annots_dir, img))
+    
+    os.makedirs((os.path.join(in_dir, 'training')), exist_ok=True)
+    os.rename(rgb_chips_dir, os.path.join(in_dir, 'training', 'images'))
+    os.rename(gt_chips_dir, os.path.join(in_dir, 'training', 'annotations'))
+
+    training_images = os.path.join(in_dir, 'training', 'images')
+    training_annots = os.path.join(in_dir, 'training', 'annotations')
+    validation_images = os.path.join(in_dir, 'validation', 'images')
+    validation_annots = os.path.join(in_dir, 'validation', 'annotations')
+
+    training_json = os.path.join(out_dir, 'training.json')
+    validation_json = os.path.join(out_dir, 'validation.json')
+
+    f = open(training_json, 'w+')
+
+    for image in os.listdir(training_images):
+        elem_dict = {}
+        elem_dict['img_path'] = os.path.join(training_images, image)
+        elem_dict['annots_path'] = os.path.join(training_annots, image)
+        elem_dict['height'] = height
+        elem_dict['width'] = width
+
+        f.write(str(elem_dict).replace("'", '"') + '\n')
+    f.close()
+
+    f = open(validation_json, 'w+')
+
+    for image in os.listdir(validation_images):
+        elem_dict = {}
+        elem_dict['img_path'] = os.path.join(validation_images, image)
+        elem_dict['annots_path'] = os.path.join(validation_annots, image)
+        elem_dict['height'] = height
+        elem_dict['width'] = width
+
+        f.write(str(elem_dict).replace("'", '"')+'\n')
+    f.close()
