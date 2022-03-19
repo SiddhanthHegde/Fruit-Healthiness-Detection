@@ -1,0 +1,12 @@
+DATASET:
+  root_dataset: 'Dataset/chips'
+  train_json: 'Dataset/chips/training.json'
+  val_json: 'Dataset/chips/validation.json'
+
+AUG:
+  perform_augs: True
+  perform_aug_proba: 0.5
+  gaussian_blur_proba: 0.8
+  color_jitter_proba: 0.8
+  grid_distort_proba: 0.8 
+  guass_noise_proba: 0.8
