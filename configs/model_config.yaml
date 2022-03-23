@@ -10,3 +10,25 @@ AUG:
   color_jitter_proba: 0.8
   grid_distort_proba: 0.8 
   guass_noise_proba: 0.8
+
+MODEL:
+  model_arch: 'uent'
+  encoder_name: 'resnet18'
+  in_channels: 3
+  classes: 3
+  encoder_weights: None
+  
+TRAIN:
+  batch_size: 1
+  shuffle: True
+  num_workers: 0
+  class_weights: []
+  lr: 2e-2
+  scheduler_patience: 2
+  lr_reduce_factor: 0.01
+  init_ckpt: ''
+
+VAL:
+  batch_size: 2
+  shuffle: False
+  num_workers: 0
