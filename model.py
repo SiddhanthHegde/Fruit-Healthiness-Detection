@@ -48,7 +48,7 @@ class SegmentationModel(pl.LightningModule):
         label = batch['label']
 
         output = self.forward(image)
-        entropy_loss = F.cross_entropy(output, label)
+        entropy_loss = F.cross_entropy(output, label, weight=self.class_weights)
         logs = {'entropy_loss': entropy_loss}
         miou = calc_iou(output, label).mean()
 
