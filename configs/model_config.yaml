@@ -27,6 +27,9 @@ TRAIN:
   scheduler_patience: 2
   lr_reduce_factor: 0.01
   init_ckpt: ''
+  wandb_iters: 100
+  n_epochs: 10
+  wandb_project_name: 'dummy_runs'
 
 VAL:
   batch_size: 2

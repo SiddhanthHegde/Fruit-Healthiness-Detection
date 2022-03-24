@@ -51,6 +51,9 @@ _C.TRAIN.lr = 2e-2
 _C.TRAIN.scheduler_patience = 2
 _C.TRAIN.lr_reduce_factor = 0.01
 _C.TRAIN.init_ckpt = ''
+_C.TRAIN.wandb_iters = 100
+_C.TRAIN.n_epochs = 10
+_C.TRAIN.wandb_project_name = ''
 
 # -----------------------------------------------------------------------------
 # Val parameters
