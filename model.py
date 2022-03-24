@@ -52,7 +52,6 @@ class SegmentationModel(pl.LightningModule):
         logs = {'entropy_loss': entropy_loss}
         miou = calc_iou(output, label).mean()
 
-        label = label.ast
         dice_sc = dice_score(output, label, bg=True)
 
         if(batch_idx % self.cfg.TRAIN.wandb_iters == 0):
