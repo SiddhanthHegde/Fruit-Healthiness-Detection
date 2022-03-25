@@ -62,4 +62,4 @@ _C.TRAIN.wandb_project_name = ''
 _C.VAL = CN()
 _C.VAL.batch_size = 1
 _C.VAL.shuffle = False
-_C.num_workers = 0
+_C.VAL.num_workers = 0

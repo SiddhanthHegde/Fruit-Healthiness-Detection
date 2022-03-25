@@ -12,26 +12,26 @@ AUG:
   guass_noise_proba: 0.8
 
 MODEL:
-  model_arch: 'uent'
-  encoder_name: 'resnet18'
+  model_arch: 'unet'
+  encoder_name: 'resnet50'
   in_channels: 3
   classes: 3
   encoder_weights: None
   
 TRAIN:
-  batch_size: 1
+  batch_size: 2
   shuffle: True
-  num_workers: 0
-  class_weights: []
+  num_workers: 16
+  class_weights: [0.75,1.5,2]
   lr: 2e-2
   scheduler_patience: 2
   lr_reduce_factor: 0.01
-  init_ckpt: ''
-  wandb_iters: 100
+  init_ckpt: None
+  wandb_iters: 5
   n_epochs: 10
   wandb_project_name: 'dummy_runs'
 
 VAL:
   batch_size: 2
   shuffle: False
-  num_workers: 0
+  num_workers: 16
