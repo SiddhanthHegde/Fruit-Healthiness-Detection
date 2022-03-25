@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import wandb
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 from torchmetrics.functional import dice_score
 
 def calc_iou(pred, target, num_classes=3):
