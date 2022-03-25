@@ -35,9 +35,9 @@ class SegmentationModel(pl.LightningModule):
         del(model_dict)
 
         class_weights = torch.tensor(
-            cfg.TRAIN.class_weights).float()
+            cfg.TRAIN.class_weights).float().to('cuda')
         
-        self.class_weights = F.softmax(class_weights)
+        self.class_weights = F.softmax(class_weights, dim=-1)
     
     def forward(self, x):
         x = self.seg_model(x)
@@ -45,7 +45,7 @@ class SegmentationModel(pl.LightningModule):
     
     def training_step(self, batch, batch_idx):
         image = batch['image']
-        label = batch['label']
+        label = batch['label'].long()
 
         output = self.forward(image)
         entropy_loss = F.cross_entropy(output, label, weight=self.class_weights)
@@ -65,12 +65,11 @@ class SegmentationModel(pl.LightningModule):
 
     def training_epoch_end(self, outputs):
         miou = torch.stack([x['miou'] for x in outputs]).mean()
-        logs = {'train_miou': miou}
-        return {'log': logs}
+        self.log('train_miou',miou)
 
     def validation_step(self, batch, batch_idx):
         image= batch['image']
-        label = batch['label']
+        label = batch['label'].long()
 
         output = self.forward(image)
         entropy_loss = F.cross_entropy(output, label)
@@ -90,23 +89,31 @@ class SegmentationModel(pl.LightningModule):
                                      for x in outputs]).mean()
         val_miou = torch.stack([x['val_miou'] for x in outputs]).mean()
         logs = {'val_entropy_loss': val_entropy_loss,
-                'val_dice_loss': val_dice_score,
+                'val_dice_score': val_dice_score,
                 'val_miou': val_miou
                 }
-        return {'log': logs}
+        self.log('val_entropy_loss',val_entropy_loss)
+        self.log('val_dice_score', val_dice_score)
+        self.log('val_miou',val_miou)
 
     def configure_optimizers(self):
-        opt = torch.optim.Adam(self.model.parameters(),
+        opt = torch.optim.Adam(self.parameters(),
                                 lr=self.cfg.TRAIN.lr)
         lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             optimizer=opt,
             patience=self.cfg.TRAIN.scheduler_patience,
             factor=self.cfg.TRAIN.lr_reduce_factor
         )
-        return [opt], [lr_scheduler]
+        return {
+            "optimizer": opt, 
+            "lr_scheduler":{
+                "scheduler": lr_scheduler,
+                "monitor": "val_entropy_loss",
+                }
+            }
 
     def train_dataloader(self):
-        train_dataset = TrainDataset(self.cfg, self.cfg.train_json)
+        train_dataset = TrainDataset(self.cfg, self.cfg.DATASET.train_json)
         return DataLoader(
             dataset=train_dataset,
             batch_size=self.cfg.TRAIN.batch_size,
@@ -115,7 +122,7 @@ class SegmentationModel(pl.LightningModule):
         )
     
     def val_dataloader(self):
-        val_dataset = ValDataset(self.cfg, self.cfg.val_json)
+        val_dataset = ValDataset(self.cfg, self.cfg.DATASET.val_json)
         return DataLoader(
             dataset=val_dataset,
             batch_size=self.cfg.VAL.batch_size,
