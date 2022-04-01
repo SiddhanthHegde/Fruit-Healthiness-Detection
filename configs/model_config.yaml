@@ -13,25 +13,26 @@ AUG:
 
 MODEL:
   model_arch: 'unet'
-  encoder_name: 'resnet50'
+  encoder_name: 'resnet18'
   in_channels: 3
   classes: 3
   encoder_weights: None
   
 TRAIN:
-  batch_size: 2
+  batch_size: 1
   shuffle: True
   num_workers: 16
-  class_weights: [0.75,1.5,2]
-  lr: 2e-2
+  class_weights: [1,1,2]
+  lr: 2e-3
   scheduler_patience: 2
   lr_reduce_factor: 0.01
   init_ckpt: None
-  wandb_iters: 5
+  wandb_iters: 2
   n_epochs: 10
   wandb_project_name: 'dummy_runs'
+  save_ckpt_dir: 'ckpts'
 
 VAL:
-  batch_size: 2
+  batch_size: 1
   shuffle: False
   num_workers: 16

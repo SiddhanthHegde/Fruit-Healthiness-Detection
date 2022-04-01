@@ -54,6 +54,7 @@ _C.TRAIN.init_ckpt = ''
 _C.TRAIN.wandb_iters = 100
 _C.TRAIN.n_epochs = 10
 _C.TRAIN.wandb_project_name = ''
+_C.TRAIN.save_ckpt_dir = ''
 
 # -----------------------------------------------------------------------------
 # Val parameters
