@@ -38,6 +38,5 @@ def log_iou_dice(model, cfg):
 
     data = [ious.tolist()]
     wandb.log({"ious_classwise": wandb.Table(
-        data=data, columns=['1', '2', '3']),
-        'dice_score': avg_dice})
+        data=data, columns=['1', '2', '3'])})
     return ious, avg_dice
