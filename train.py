@@ -1,9 +1,11 @@
+from gc import callbacks
 from logging import config
 import os
 import wandb
 import argparse
 from pytorch_lightning.loggers import WandbLogger
-from pytorch_lightning.callbacks.lr_monitor import LearningRateMonitor  
+from pytorch_lightning.callbacks.lr_monitor import LearningRateMonitor
+from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 from pytorch_lightning import Trainer, seed_everything
 from model import SegmentationModel
 from utils import log_iou_dice
@@ -30,8 +32,16 @@ def main(cfg):
 
     ckpt_path = cfg.TRAIN.init_ckpt
 
+    os.makedirs(cfg.TRAIN.save_ckpt_dir, exist_ok=True)
+    model_ckpt = ModelCheckpoint(
+        dirpath=cfg.TRAIN.save_ckpt_dir,
+        save_top_k=3,
+        filename=wandb_run_name+ '_' + '{epoch:02d}-{val_entropy_loss:.3f}',
+        monitor='val_entropy_loss')
+
     trainer = Trainer(logger=[wandb_logger], 
                     max_epochs=cfg.TRAIN.n_epochs,
+                    callbacks=[model_ckpt],
                     gpus=1)
 
     trainer.fit(model, ckpt_path=ckpt_path)
@@ -39,12 +49,7 @@ def main(cfg):
     print('Iou: ', ious)
     print('Dice scores: ', dice_sc)
 
-    ckpt_path = os.path.join('./ckpt', f"{wandb_run_name}_{cfg.TRAIN.n_epochs}.ckpt")
-    ckpt_base_path = os.path.dirname(ckpt_path)
-    os.makedirs(ckpt_base_path, exist_ok=True)
-
-    trainer.save_checkpoint(ckpt_path)
-    wandb.save(ckpt_path)
+    # wandb.save(ckpt_path)
 
 #-----------------------------------------------------------------------
 
