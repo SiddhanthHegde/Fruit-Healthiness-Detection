@@ -6,7 +6,7 @@ from segmentation_models_pytorch import Unet, UnetPlusPlus, MAnet, Linknet, PSPN
 import pytorch_lightning as pl
 import wandb
 from torchmetrics.functional import dice_score
-from dataset import TrainDataset, ValDataset
+from dataset2 import SegmentationDataset
 from utils import calc_iou
 
 class SegmentationModel(pl.LightningModule):
@@ -38,10 +38,20 @@ class SegmentationModel(pl.LightningModule):
             cfg.TRAIN.class_weights).float().to('cuda')
         
         self.class_weights = F.softmax(class_weights, dim=-1)
+        self.train_dataset = SegmentationDataset(self.cfg, self.cfg.DATASET.train_json)
+        self.val_dataset = SegmentationDataset(self.cfg, self.cfg.DATASET.val_json)
     
     def forward(self, x):
         x = self.seg_model(x)
         return x
+
+    def pixel_acc(self, pred, label):
+        _, preds = torch.max(pred, dim=1)
+        valid = (label >= 0).long()
+        acc_sum = torch.sum(valid * (preds == label).long())
+        pixel_sum = torch.sum(valid)
+        acc = acc_sum.float() / (pixel_sum.float() + 1e-10)
+        return acc
     
     def training_step(self, batch, batch_idx):
         image = batch['image']
@@ -49,22 +59,25 @@ class SegmentationModel(pl.LightningModule):
 
         output = self.forward(image)
         entropy_loss = F.cross_entropy(output, label, weight=self.class_weights)
-        logs = {'entropy_loss': entropy_loss}
+        acc = self.pixel_acc(output, label)
         miou = calc_iou(output, label).mean()
 
         dice_sc = dice_score(output, label, bg=True)
 
         if(batch_idx % self.cfg.TRAIN.wandb_iters == 0):
-            wandb.log(logs)
+            self.log('train_loss',entropy_loss)
 
         return {
             'loss': entropy_loss,
+            'train_acc': acc,
             'miou': miou,
             'dice_score': dice_sc
         }
 
     def training_epoch_end(self, outputs):
         miou = torch.stack([x['miou'] for x in outputs]).mean()
+        accs = torch.stack([x['train_acc'] for x in outputs]).mean()
+        self.log('train_acc',accs)
         self.log('train_miou',miou)
 
     def validation_step(self, batch, batch_idx):
@@ -113,18 +126,16 @@ class SegmentationModel(pl.LightningModule):
             }
 
     def train_dataloader(self):
-        train_dataset = TrainDataset(self.cfg, self.cfg.DATASET.train_json)
         return DataLoader(
-            dataset=train_dataset,
+            dataset=self.train_dataset,
             batch_size=self.cfg.TRAIN.batch_size,
             shuffle=self.cfg.TRAIN.shuffle,
             num_workers=self.cfg.TRAIN.num_workers
         )
     
     def val_dataloader(self):
-        val_dataset = ValDataset(self.cfg, self.cfg.DATASET.val_json)
         return DataLoader(
-            dataset=val_dataset,
+            dataset=self.val_dataset,
             batch_size=self.cfg.VAL.batch_size,
             shuffle=self.cfg.VAL.shuffle,
             num_workers=self.cfg.VAL.num_workers
