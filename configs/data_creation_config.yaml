@@ -7,8 +7,8 @@ JSON2MASK:
 
 CHIPPING:
   perform_chipping: True
-  dim: 512                                  # dimension (in pixels) of the image chips to  be generated
-  stride: 512                               # stride (in pixels) to be kept
+  dim: 1024                                  # dimension (in pixels) of the image chips to  be generated
+  stride: 1024                               # stride (in pixels) to be kept
   padding: 0                                # Padding (in pixels) 
   num_processes: 16                         # No. of processes for multiprocessing
   rgb_dir: 'Dataset/rgb'                    # Path to the directory containing rgb images
@@ -18,7 +18,7 @@ CHIPPING:
 REMOVE_IMAGES:
   remove_images: True                       # Whether to prune training data for rgb images having black portion above a certain threshold
   images_folder: ''                         # Path to the directory containing the rgb and gt chips (use only if not chipping)
-  percent_threshold: 99                     # Percent thresold for removing images
+  percent_threshold: 98                     # Percent thresold for removing images
   num_processes: 4                          # No. of processes for multiprocessing
 
 PIXELS:
@@ -31,5 +31,5 @@ MAKE_JSON:
   in_dir: ''                                # Path to the directory containing the 'rgb' and 'gt' folder
   out_dir: ''                               # Path to the directory to generate the .json files
   val_split_percent: 15                     # Validation split
-  height: 512                               # Height of the images
-  width: 512                                # Width of the images
+  height: 1024                               # Height of the images
+  width: 1024                                # Width of the images
