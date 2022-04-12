@@ -12,11 +12,9 @@ class SegmentationDataset(Dataset):
         self.cfg = cfg
         self.list_sample = [json.loads(x.rstrip())
                             for x in open(json_file, 'r')]
-        imgs_dir = os.path.join(cfg.DATASET.root_dataset, 'training', 'images')
-        mean_std_dict = RGB_Mean_StdDev(imgs_dir, cfg.DATASET.root_dataset)
         self.transform = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize(mean=mean_std_dict['mean'], std=mean_std_dict['std']),
+            transforms.Normalize(mean=cfg.TRAIN.mean_values, std=cfg.TRAIN.std_values),
         ])
    
     def __len__(self):

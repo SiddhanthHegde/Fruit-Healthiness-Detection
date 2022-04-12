@@ -55,6 +55,8 @@ _C.TRAIN.wandb_iters = 100
 _C.TRAIN.n_epochs = 10
 _C.TRAIN.wandb_project_name = ''
 _C.TRAIN.save_ckpt_dir = ''
+_C.TRAIN.mean_values = []
+_C.TRAIN.std_values = []
 
 # -----------------------------------------------------------------------------
 # Val parameters
