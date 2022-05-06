@@ -32,56 +32,61 @@ def json_to_mask(root_dir: str, filename: str, save_dir: str):
     infected_mask = np.zeros((height,width),dtype=np.uint8)
     ternary_mask = np.zeros((height,width),dtype=np.uint8)
 
-    for i in range(n_polys):
+    try:
+        for i in range(n_polys):
 
-        label = polygons[i]['label'] 
+            label = polygons[i]['label'] 
 
-        # Label 1 corresponds to the outline of the fruit
-        if label == '1':
-            temp_mask = shape_to_mask(
-                (height,width),
-                polygons[i]['points'],
-                shape_type=None,
-                line_width=1,
-                point_size=1
-            )
-            healthy_mask[np.where(temp_mask)] = 1
+            # Label 1 corresponds to the outline of the fruit
+            if label == '1':
+                temp_mask = shape_to_mask(
+                    (height,width),
+                    polygons[i]['points'],
+                    shape_type=None,
+                    line_width=1,
+                    point_size=1
+                )
+                healthy_mask[np.where(temp_mask)] = 1
 
-        # Label 2 corresponds to the outlines of the infected regions
-        elif label == '2':
-            temp_mask = shape_to_mask(
-                (height,width),
-                polygons[i]['points'],
-                shape_type=None,
-                line_width=1,
-                point_size=1
-            )
-            infected_mask[np.where(temp_mask)] = 1
+            # Label 2 corresponds to the outlines of the infected regions
+            elif label == '2':
+                temp_mask = shape_to_mask(
+                    (height,width),
+                    polygons[i]['points'],
+                    shape_type=None,
+                    line_width=1,
+                    point_size=1
+                )
+                infected_mask[np.where(temp_mask)] = 1
+            
+            # Label 3 corresponds to the outlines of healthy regions inside the infected regions
+            elif label == '3':
+                temp_mask = shape_to_mask(
+                    (height,width), 
+                    polygons[i]['points'],
+                    shape_type=None,
+                    line_width=1,
+                    point_size=1
+                )
+                ternary_mask[np.where(temp_mask)] = 1
+
+            else:
+                print(f'Label {label} cannot be used, required range - (0-2)')
+                return
+
+        healthy_mask[np.where(infected_mask == 1)] = 2
+        healthy_mask[np.where(ternary_mask == 1)] = 1
+
+        save_path = os.path.join(
+            save_dir,
+            filename.replace('.json','.png')
+        )
+
+        Image.fromarray(healthy_mask).save(save_path)
         
-        # Label 3 corresponds to the outlines of healthy regions inside the infected regions
-        elif label == '3':
-            temp_mask = shape_to_mask(
-                (height,width), 
-                polygons[i]['points'],
-                shape_type=None,
-                line_width=1,
-                point_size=1
-            )
-            ternary_mask[np.where(temp_mask)] = 1
-
-        else:
-            print(f'Label {label} cannot be used, required range - (0-2)')
-            return
-
-    healthy_mask[np.where(infected_mask == 1)] = 2
-    healthy_mask[np.where(ternary_mask == 1)] = 1
-
-    save_path = os.path.join(
-        save_dir,
-        filename.replace('.json','.png')
-    )
-
-    Image.fromarray(healthy_mask).save(save_path)
+    except Exception as e:
+        print('Error with file: {} and the exception is'.format(filename),end=' ')
+        print(e)
 
 #-----------------------------------------------------------------------
 
