@@ -130,7 +130,8 @@ class SegmentationModel(pl.LightningModule):
             dataset=self.train_dataset,
             batch_size=self.cfg.TRAIN.batch_size,
             shuffle=self.cfg.TRAIN.shuffle,
-            num_workers=self.cfg.TRAIN.num_workers
+            num_workers=self.cfg.TRAIN.num_workers,
+            drop_last=True
         )
     
     def val_dataloader(self):
@@ -138,5 +139,6 @@ class SegmentationModel(pl.LightningModule):
             dataset=self.val_dataset,
             batch_size=self.cfg.VAL.batch_size,
             shuffle=self.cfg.VAL.shuffle,
-            num_workers=self.cfg.VAL.num_workers
+            num_workers=self.cfg.VAL.num_workers,
+            drop_last=True
         )

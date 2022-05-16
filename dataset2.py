@@ -5,7 +5,6 @@ from PIL import Image
 import torch
 from torchvision import transforms
 from torch.utils.data import Dataset
-from data_creation.get_mean_std import RGB_Mean_StdDev
 
 class SegmentationDataset(Dataset):
     def __init__(self, cfg, json_file):
