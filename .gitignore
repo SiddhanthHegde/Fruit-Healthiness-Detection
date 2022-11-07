@@ -1,0 +1,6 @@
+__pycache__
+Dataset
+wandb
+ckpts
+test/data
+configs
